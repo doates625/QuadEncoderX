@@ -7,35 +7,11 @@
 
 /**
  * @brief Constructs quad encoder interface
- * @param channel_A Channel A input
- * @param channel_B Channel B input
- * @param channel_X Channel X input
- * @param cnt_per_rev Resolution [counts per revolution]
- * @param wrap_angle Wraps angle to range [-pi, +pi] if true
- */
-QuadEncoderX::QuadEncoderX(
-	DigitalIn* channel_A,
-	DigitalIn* channel_B,
-	DigitalIn* channel_X,
-	float cnt_per_rev,
-	bool wrap_angle) :
-QuadEncoder(channel_A, channel_B, cnt_per_rev, wrap_angle)
-{
-	this->channel_X = channel_X;
-	this->calibrated = false;
-	this->home_angle = 0.0f;
-}
-
-/**
- * @brief Constructs quad encoder interface
  * @param pin_channel_A ID of channel A input
  * @param pin_channel_B ID of channel B input
  * @param pin_channel_X ID of channel X input
  * @param cnt_per_rev Resolution [counts per revolution]
  * @param wrap_angle Wraps angle to range [-pi, +pi] if true
- * 
- * This constructor dynamically allocates the IO interfaces and deletes them
- * on destruction.
  */
 QuadEncoderX::QuadEncoderX(
 	Platform::pin_t pin_channel_A,
@@ -43,29 +19,11 @@ QuadEncoderX::QuadEncoderX(
 	Platform::pin_t pin_channel_X,
 	float cnt_per_rev,
 	bool wrap_angle) :
-QuadEncoderX(
-	new DigitalIn(pin_channel_A),
-	new DigitalIn(pin_channel_B),
-	new DigitalIn(pin_channel_X),
-	cnt_per_rev,
-	wrap_angle)
+	QuadEncoder(pin_channel_A, pin_channel_B, cnt_per_rev, wrap_angle),
+	channel_X(pin_channel_X)
 {
-	this->dynamic_io = true;
-}
-
-/**
- * @brief Destructs quad encoder interface
- * 
- * Deletes IO interfaces if they were created with dynamic memory.
- */
-QuadEncoderX::~QuadEncoderX()
-{
-	if (dynamic_io)
-	{
-		delete channel_A;
-		delete channel_B;
-		delete channel_X;
-	}
+	this->calibrated = false;
+	this->home_angle = 0.0f;
 }
 
 /**
